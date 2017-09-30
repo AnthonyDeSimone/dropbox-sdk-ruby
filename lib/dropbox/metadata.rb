@@ -32,6 +32,15 @@ module Dropbox
     end
   end
 
+  module SharedMetadata 
+    def self.create(attrs={})
+      pp attrs
+      object_type = attrs.delete(".tag")
+
+      return Kernel.const_get("Dropbox::Shared#{object_type.capitalize}Metadata").new(attrs)
+    end
+  end
+
   # Contains the metadata (but not contents) of a folder.
   class FolderMetadata < Metadata
     attr_reader :id
@@ -45,6 +54,26 @@ module Dropbox
       cmp.is_a?(self.class) && self.id == cmp.id
     end
   end
+
+  class SharedFileMetadata < FileMetadata
+    attr_reader :url
+
+    def initialize(attrs={})
+      @url = attrs.delete('url')
+
+      super(attrs)
+    end
+  end
+
+  class SharedFolderMetadata < FolderMetadata
+    attr_reader :url
+
+    def initialize(attrs={})
+      @url = attrs.delete('url')
+
+      super(attrs)
+    end
+  end  
 
   # Contains the metadata of a deleted file.
   class DeletedMetadata < Metadata

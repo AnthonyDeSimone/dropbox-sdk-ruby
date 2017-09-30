@@ -314,6 +314,24 @@ module Dropbox
       SpaceUsage.new(resp)
     end
 
+    def list_folders
+      p request('/sharing/list_folders')
+    end
+
+    # 
+    #
+    # @return [Dropbox::SharedObject]
+    def create_shared_link_with_settings(path, settings={})
+      params = {path: path}
+      resp = request('/sharing/create_shared_link_with_settings', params.merge({settings: settings})) 
+      SharedMetadata.create(resp)
+    end
+
+    def get_file_metadata(path)
+      resp = request('/sharing/get_file_metadata', {file: path})
+      SharedMetadata.create(resp)
+    end
+
     private
       def parse_tagged_response(resp)
         case resp['.tag']
